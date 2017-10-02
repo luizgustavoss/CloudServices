@@ -1,62 +1,201 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>WMTS</title>
-    <link rel="stylesheet" href="https://openlayers.org/en/v4.2.0/css/ol.css" type="text/css">
+    <title>Digital Globe WMTS Service Client</title>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.3.4/css/ol.css">
+
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
     <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
     <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
-    <script src="https://openlayers.org/en/v4.2.0/build/ol.js"></script>
+    <script src="https://openlayers.org/en/v4.3.4/build/ol.js"></script>
+    <script src="map-definition.js"></script>
 </head>
-<body>
-<div id="map" class="map"></div>
-<script>
-    var projection = ol.proj.get('EPSG:3857');
-    var projectionExtent = projection.getExtent();
-    var size = ol.extent.getWidth(projectionExtent) / 256;
-    var resolutions = new Array(14);
-    var matrixIds = new Array(14);
-    
-    for (var z = 0; z < 14; ++z) {
-        // generate resolutions and matrixIds arrays for this WMTS
-        resolutions[z] = size / Math.pow(2, z);
-        matrixIds[z] = 'EPSG:3857:' + z;
-    }
 
-    var map = new ol.Map({
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM(),
-                opacity: 1
-            }),
-            new ol.layer.Tile({
-                opacity: 1,
-                source: new ol.source.WMTS({
-                    url: 'https://beta.digitalglobe.com/earthservice/wmtsaccess?CONNECTID=ed14a3b1-cb22-4359-a368-29342a3bf62d&featureProfile=Global_Currency_Profile',
-                    layer: 'DigitalGlobe:ImageryTileService',
-                    matrixSet: 'EPSG:3857',
-                    format: 'image/jpeg',
-                    projection: projection,
-                    tileGrid: new ol.tilegrid.WMTS({
-                        origin: ol.extent.getTopLeft(projectionExtent),
-                        resolutions: resolutions,
-                        matrixIds: matrixIds
-                    }),
-                    style: '',
-                    wrapX: true
-                })
-            })
-        ],
-        target: 'map',
-        controls: ol.control.defaults({
-            attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-                collapsible: false
-            })
-        }),
-        view: new ol.View({
-            center: [-11158582, 4813697],
-            zoom: 4
-        })
-    });
-</script>
+<body onload="defineMap()">
+
+    <div class="container">
+
+        <h1>Digital Globe WMTS Service Client</h1>
+        <br/>
+        <h3>Configurações</h3>
+        <br/>
+        <div class="row">
+
+            <div class="col-sm-3">
+                <div class="form-group">
+                    <label for="connectid">ConnectID:</label>
+                    <input type="text" name="connectid" id="connectid" class="form-control">
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="format">Format:</label>
+                    <select class="form-control" id="format">
+                        <option selected>image/jpeg</option>
+                        <option>image/png</option>
+                        <option>image/vnd.jpeg-png</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="featureProfile">Stacking Profile:</label>
+                    <select class="form-control" id="featureProfile">
+                        <option  value="MyDG_User_Assigned_Profile">User's Assigned Profile</option>
+                        <option value="MyDG_Color_Consumer_Profile">Most Aesthetic Color</option>
+                        <option value="MyDG_Consumer_Profile">Most Aesthetic All</option>
+                        <option value="Cloud_Cover_Profile">Least Cloud Cover</option>
+                        <option value="Global_Currency_Profile" selected>Most Recent</option>
+                        <option value="Color_Infrared_Profile">Color Infrared</option>
+                        <option value="Global_Currency_Profile_HA">Most Recent High Altitude</option>
+                        <option value="Global_Currency_Profile_PAN_HA">Most Recent Panchromatic High Altitude</option>
+                        <option value="Mapmaker_Profile">Mapmaker Mode</option>
+                        <option value="Global_Currency_Mid_Profile">Most Recent Midrange</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="btn-filtro">Ações</label>
+                    <div>
+                        <button type="button" id="btn-filtro" class="btn btn-default" data-toggle="modal" data-target="#configModal" title="Configurar Filtros">                    
+                            <i class="fa fa-filter" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Aplicar as Configurações e Consultar o Mapa">
+                            <i class="fa fa-map-o" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <br/>
+
+        <div id="map" class="map"></div>
+
+
+
+
+        <!-- Modal -->
+        <div class="modal fade" id="configModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Filtros e Configurações</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <h4>Filtros para Extended Common Query Language</h4>
+
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="productType">Tipo de Produto:</label>
+                                    <select class="form-control" id="productType">
+                                        <option value="">Nenhum (Padrão)</option>
+                                        <option selected>Natural Color</option>
+                                        <option>Pan Sharpened Natural Color</option>
+                                        <option>Panchromatic</option>
+                                        <option>Color Infrared</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="cloudCover">Cobertura de Nuvens:</label>
+                                    <select class="form-control" id="cloudCover">
+                                        <option value="">Nenhum (Padrão)</option>
+                                        <option value=".01">1%</option>
+                                        <option value=".02">2%</option>
+                                        <option value=".03">3%</option>
+                                        <option value=".04">4%</option>
+                                        <option value=".05">5%</option>
+                                        <option value=".06">6%</option>
+                                        <option value=".07">7%</option>
+                                        <option value=".08">8%</option>
+                                        <option value=".09">9%</option>
+                                        <option value=".10">10%</option>
+                                        <option value=".15">15%</option>
+                                        <option value=".20">20%</option>
+                                        <option value=".25">25%</option>
+                                        <option value=".30">30%</option>
+                                        <option value=".35">35%</option>
+                                        <option value=".40">40%</option>
+                                        <option value=".45">45%</option>
+                                        <option value=".50">50%</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="ageDays">Idade da Imagem:</label>
+                                    <select class="form-control" id="ageDays">
+                                        <option value="">Todas Disponíveis</option>
+                                        <option value="1">24 Horas</option>
+                                        <option value="2">48 Horas</option>
+                                        <option value="3">72 Horas</option>
+                                        <option value="7">Uma Semana</option>
+                                        <option value="15">Duas Semanas</option>
+                                        <option value="30">1 Mês</option>
+                                        <option value="60">2 Meses</option>
+                                        <option value="90">3 Meses</option>
+                                        <option value="180">6 Meses</option>
+                                        <option value="365">Um Ano</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label for="source">Fontes:</label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV01">WV01</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV02">WV02</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV03">WV03</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="GE01">GE01</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="QB02">QB02</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS3">KS3</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS3A">KS3A</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV03_SWIR">WV03_SWIR</label>
+                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS5">KS5</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Limpar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal">Aplicar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+    </div>
 </body>
+
 </html>
