@@ -23,7 +23,7 @@ function defineMap(requestParam, ) {
             new ol.layer.Tile({
                 opacity: 1,
                 source: new ol.source.WMTS({
-                    url: 'https://services.digitalglobe.com/earthservice/wmtsaccess?connectid=3b31d310-97e7-434d-8e9c-632e007b753a&featureProfile=Accuracy_Profile',
+                    url: 'https://services.digitalglobe.com/earthservice/wmtsaccess?connectid=CONNECT_ID&featureProfile=Accuracy_Profile',
                     layer: 'DigitalGlobe:ImageryTileService',
                     matrixSet: 'EPSG:3857',
                     format: 'image/jpeg',
