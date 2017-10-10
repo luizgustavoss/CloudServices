@@ -38,14 +38,15 @@
 
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label for="connectid">ConnectID:</label>
+                    <label for="connectid"><i class="fa fa-key" aria-hidden="true"></i> ConnectID:</label>
                     <input type="text" name="connectid" id="connectid" class="form-control">
                 </div>
             </div>
-
+        </div>
+        <div class="row">
             <div class="col-sm-2">
                 <div class="form-group">
-                    <label for="format">Format:</label>
+                    <label for="format"><i class="fa fa-picture-o" aria-hidden="true"></i> Format:</label>
                     <select class="form-control" id="format">
                         <option selected>image/jpeg</option>
                         <option>image/png</option>
@@ -55,7 +56,7 @@
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label for="featureProfile">Stacking Profile:</label>
+                    <label for="featureProfile"><i class="fa fa-bars" aria-hidden="true"></i> Stacking Profile:</label>
                     <select class="form-control" id="featureProfile">
                         <option  value="MyDG_User_Assigned_Profile">User's Assigned Profile</option>
                         <option value="MyDG_Color_Consumer_Profile">Most Aesthetic Color</option>
@@ -73,12 +74,53 @@
 
             <div class="col-sm-2">
                 <div class="form-group">
+                    <label for="opacidadeOSM"><i class="fa fa-low-vision" aria-hidden="true"></i> Opacidade OSM:</label>
+                    <select class="form-control" id="opacidadeOSM">
+                        <option selected>1</option>
+                        <option>0.9</option>
+                        <option>0.8</option>
+                        <option>0.7</option>
+                        <option>0.6</option>
+                        <option>0.5</option>
+                        <option>0.4</option>
+                        <option>0.3</option>
+                        <option>0.2</option>
+                        <option>0.1</option>
+                        <option>0</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
+                    <label for="opacidadeDG"><i class="fa fa-low-vision" aria-hidden="true"></i> Opacidade DG:</label>
+                    <select class="form-control" id="opacidadeDG">
+                        <option selected>1</option>
+                        <option>0.9</option>
+                        <option>0.8</option>
+                        <option>0.7</option>
+                        <option>0.6</option>
+                        <option>0.5</option>
+                        <option>0.4</option>
+                        <option>0.3</option>
+                        <option>0.2</option>
+                        <option>0.1</option>
+                        <option>0</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-sm-2">
+                <div class="form-group">
                     <label for="btn-filtro">Ações</label>
                     <div>
                         <button type="button" id="btn-filtro" class="btn btn-default" data-toggle="modal" data-target="#configModal" title="Configurar Filtros">                    
                             <i class="fa fa-filter" aria-hidden="true"></i>
                         </button>
-                        <button type="button" class="btn btn-primary" title="Aplicar as Configurações e Consultar o Mapa">
+                        <button type="button" id="btn-auth" class="btn btn-default" data-toggle="modal" data-target="#authModal" title="Autenticar (GetCapabilities)">                    
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </button>
+                        <button type="button" class="btn btn-primary" title="Aplicar Filtros e Configurações e Consultar o Mapa" onclick="applyFilter()">
                             <i class="fa fa-map-o" aria-hidden="true"></i>
                         </button>
                     </div>
@@ -105,12 +147,10 @@
                     </div>
                     <div class="modal-body">
 
-                        <h4>Filtros para Extended Common Query Language</h4>
-
                         <div class="row">
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <label for="productType">Tipo de Produto:</label>
+                                    <label for="productType"><i class="fa fa-globe" aria-hidden="true"></i> Tipo de Produto:</label>
                                     <select class="form-control" id="productType">
                                         <option value="">Nenhum (Padrão)</option>
                                         <option selected>Natural Color</option>
@@ -122,7 +162,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <label for="cloudCover">Cobertura de Nuvens:</label>
+                                    <label for="cloudCover"><i class="fa fa-cloud" aria-hidden="true"></i> Cobertura de Nuvens:</label>
                                     <select class="form-control" id="cloudCover">
                                         <option value="">Nenhum (Padrão)</option>
                                         <option value=".01">1%</option>
@@ -148,7 +188,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <div class="form-group">
-                                    <label for="ageDays">Idade da Imagem:</label>
+                                    <label for="ageDays"><i class="fa fa-calendar" aria-hidden="true"></i> Idade da Imagem:</label>
                                     <select class="form-control" id="ageDays">
                                         <option value="">Todas Disponíveis</option>
                                         <option value="1">24 Horas</option>
@@ -167,7 +207,7 @@
                         </div>
                         <div class="row">
                             <div class="col-sm-12">
-                                <label for="source">Fontes:</label>
+                                <label for="source"><i class="fa fa-database" aria-hidden="true"></i> Fontes:</label>
                             </div>
                         </div>
                         <div class="row">
@@ -186,8 +226,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Limpar</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal">Aplicar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearConfigFilter()">Limpar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="configFilter()">Aplicar</button>
                     </div>
                 </div>
 

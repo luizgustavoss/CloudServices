@@ -11,33 +11,140 @@ for (var z = 0; z < 14; ++z) {
 }
 
 
-function defineMap(requestParam, ) {
+/** layers do mapa: OSM (OpenStreetmap) e DG (Digital Globe) */
+var osmLayer;
+var dgLayer;
 
-    //if (config) {
+/** opacidade */
+var opacidadeOSM = 1; // OSM
+var opacidadeDG = 1; // Digital Globe
+
+
+/** valores default para as configurações da camada da Digital Globe **/
+var baseUrl = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';
+var connectid = 'CONNECT_ID';
+var featureProfile = 'Accuracy_Profile';
+var fullUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
+var format = 'image/jpeg';
+var Coverage_CQL_Filter;
+
+
+/** filtros (Coverage_CQL_Filter) para a camada da Digital Globe */
+var productType;
+var cloudCover;
+var ageDays;
+var source;
+
+
+/** aplicar valores do filtro nas variáveis */
+function configFilter() {
+
+    productType = $('#productType').val();
+    cloudCover = $('#cloudCover').val();
+    ageDays = $('#ageDays').val();
+    source = $('#source').val();
+}
+
+/** limpar valores dos filtros nas variáveis */
+function clearConfigFilter() {
+
+    productType = '';
+    cloudCover = '';
+    ageDays = '';
+    source = '';
+}
+
+
+function applyFilter() {
+
+    format = $('#format').val();
+    connectid = $('#connectid').val();
+    featureProfile = $('#featureProfile').val();
+
+    opacidadeOSM = $('#opacidadeOSM').val();
+    opacidadeDG = $('#opacidadeDG').val();
+
+    fullUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
+
+    if (productType || cloudCover || ageDays || source) {
+
+        Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
+
+        var cql = '';
+
+        if (productType) {
+            cql += '(productType = ' + productType + ")";
+        }
+
+        if (cloudCover) {
+            if (cql) {
+                cql += ' AND ';
+            }
+            cql += '(cloudCover >= ' + cloudCover + ")";
+        }
+
+        if (ageDays) {
+            if (cql) {
+                cql += ' AND ';
+            }
+            cql += '(ageDays >= ' + ageDays + ")";
+        }
+
+        /*
+        if(source ){
+            if(cql){
+                cql += ' AND ';
+            }
+            cql += '(source >= '+source+")";
+        }
+        */
+
+        Coverage_CQL_Filter += cql;
+
+        fullUrl += Coverage_CQL_Filter;
+    }
+
+
+
+
+
+
+
+
+    dgLayer.setSource(new ol.source.WMTS({
+        url: fullUrl,
+        layer: 'DigitalGlobe:ImageryTileService',
+        matrixSet: 'EPSG:3857',
+        format: format,
+        projection: projection,
+        tileGrid: new ol.tilegrid.WMTS({
+            origin: ol.extent.getTopLeft(projectionExtent),
+            resolutions: resolutions,
+            matrixIds: matrixIds
+        }),
+        style: '',
+        wrapX: true
+    }));
+
+    dgLayer.setOpacity(opacidadeDG);
+    osmLayer.setOpacity(opacidadeOSM);
+
+}
+
+function defineMap() {
+
+    osmLayer = new ol.layer.Tile({
+        source: new ol.source.OSM(),
+        opacity: opacidadeOSM
+    });
+
+    dgLayer = new ol.layer.Tile({
+        opacity: opacidadeDG,
+        source: null
+    });
+
     var map = new ol.Map({
-        layers: [
-            new ol.layer.Tile({
-                source: new ol.source.OSM(),
-                opacity: 1
-            }),
-            new ol.layer.Tile({
-                opacity: 1,
-                source: new ol.source.WMTS({
-                    url: 'https://services.digitalglobe.com/earthservice/wmtsaccess?connectid=CONNECT_ID&featureProfile=Accuracy_Profile',
-                    layer: 'DigitalGlobe:ImageryTileService',
-                    matrixSet: 'EPSG:3857',
-                    format: 'image/jpeg',
-                    projection: projection,
-                    tileGrid: new ol.tilegrid.WMTS({
-                        origin: ol.extent.getTopLeft(projectionExtent),
-                        resolutions: resolutions,
-                        matrixIds: matrixIds
-                    }),
-                    style: '',
-                    wrapX: true
-                })
-            })
-        ],
+        layers: [osmLayer, dgLayer],
         target: 'map',
         controls: ol.control.defaults({
             attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -49,6 +156,6 @@ function defineMap(requestParam, ) {
             zoom: 4
         })
     });
-    //}
+
 
 }
