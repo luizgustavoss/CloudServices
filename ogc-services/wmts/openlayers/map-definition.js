@@ -80,7 +80,7 @@ function applyFilter() {
             if (cql) {
                 cql += ' AND ';
             }
-            cql += '(cloudCover >= ' + cloudCover + ")";
+            cql += '(cloudCover < ' + cloudCover + ")";
         }
 
         if (ageDays) {
@@ -99,7 +99,7 @@ function applyFilter() {
         }
         */
 
-        Coverage_CQL_Filter += cql;
+        Coverage_CQL_Filter += "'" + cql + "'";
 
         fullUrl += Coverage_CQL_Filter;
     }
