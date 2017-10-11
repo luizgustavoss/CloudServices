@@ -114,7 +114,7 @@
                 <div class="form-group">
                     <label for="btn-filtro">Ações</label>
                     <div>
-                        <button type="button" id="btn-filtro" class="btn btn-default" data-toggle="modal" data-target="#configModal" title="Configurar Filtros">                    
+                        <button type="button" id="btn-filtro" class="btn btn-default" data-toggle="modal" data-target="#filterModal" title="Configurar Filtros">                    
                             <i class="fa fa-filter" aria-hidden="true"></i>
                         </button>
                         <button type="button" id="btn-auth" class="btn btn-default" data-toggle="modal" data-target="#authModal" title="Autenticar (GetCapabilities)">                    
@@ -135,8 +135,8 @@
 
 
 
-        <!-- Modal -->
-        <div class="modal fade" id="configModal" role="dialog">
+        <!-- Filter Modal -->
+        <div class="modal fade" id="filterModal" role="dialog">
             <div class="modal-dialog modal-lg">
 
                 <!-- Modal content-->
@@ -228,6 +228,47 @@
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearConfigFilter()">Limpar</button>
                         <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="configFilter()">Aplicar</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+
+        <!-- Auth Modal -->
+        <div class="modal fade" id="authModal" role="dialog">
+            <div class="modal-dialog modal-lg">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h3 class="modal-title">Authentication (GetCapabilities)</h3>
+                    </div>
+                    <div class="modal-body">
+
+                        <div class="row">
+                            
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="username"><i class="fa fa-key" aria-hidden="true"></i> Username:</label>
+                                    <input type="text" name="username" id="username" class="form-control">
+                                </div>
+                            </div>
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <label for="password"><i class="fa fa-key" aria-hidden="true"></i> Password:</label>
+                                    <input type="password" name="password" id="password" class="form-control">
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="callGetCapabilities()">Autenticar</button>
                     </div>
                 </div>
 

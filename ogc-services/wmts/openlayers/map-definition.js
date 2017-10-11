@@ -24,7 +24,7 @@ var opacidadeDG = 1; // Digital Globe
 var baseUrl = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';
 var connectid = 'CONNECT_ID';
 var featureProfile = 'Accuracy_Profile';
-var fullUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
+var mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
 var format = 'image/jpeg';
 var Coverage_CQL_Filter;
 
@@ -34,6 +34,10 @@ var productType;
 var cloudCover;
 var ageDays;
 var source;
+
+/** valores para autenticação no GetCapabilities */
+var username;
+var password;
 
 
 /** aplicar valores do filtro nas variáveis */
@@ -55,6 +59,28 @@ function clearConfigFilter() {
 }
 
 
+function callGetCapabilities(){
+    
+    connectid = $('#connectid').val();
+    username = $('#username').val();
+    password = $('#password').val();
+
+    if(!connectid){
+        alert('ConnectID não informado!')
+    } else if(!username || !password){
+        alert('Usuário e/ou senha não informados!')
+    }
+    else{      
+
+        var gcURL = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';    
+        gcURL += 'connectid='+connectid+'&SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&username='+username+'&password='+password;
+
+        fetch(gcURL);
+
+    }
+
+}
+
 function applyFilter() {
 
     format = $('#format').val();
@@ -64,8 +90,9 @@ function applyFilter() {
     opacidadeOSM = $('#opacidadeOSM').val();
     opacidadeDG = $('#opacidadeDG').val();
 
-    fullUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
+    mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
 
+    // preparar cql_filter, se houverem filtros aplicados
     if (productType || cloudCover || ageDays || source) {
 
         Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
@@ -101,18 +128,13 @@ function applyFilter() {
 
         Coverage_CQL_Filter += "'" + cql + "'";
 
-        fullUrl += Coverage_CQL_Filter;
+        mapUrl += Coverage_CQL_Filter;
     }
 
 
 
-
-
-
-
-
     dgLayer.setSource(new ol.source.WMTS({
-        url: fullUrl,
+        url: mapUrl,
         layer: 'DigitalGlobe:ImageryTileService',
         matrixSet: 'EPSG:3857',
         format: format,
