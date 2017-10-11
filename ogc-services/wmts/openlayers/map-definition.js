@@ -107,7 +107,7 @@ function applyFilter() {
     mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
 
 
-    if (productType || cloudCover || ageDays || source) {
+    if (productType || cloudCover || ageDays) {
 
         Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
         var cql = '';
