@@ -30,7 +30,6 @@ var Coverage_CQL_Filter;
 var productType;
 var cloudCover;
 var ageDays;
-var source;
 
 // variáveis usadas na autenticação (GetCapabilities)
 var username;
@@ -44,7 +43,6 @@ function configFilter() {
     productType = $('#productType').val();
     cloudCover = $('#cloudCover').val();
     ageDays = $('#ageDays').val();
-    source = $('#source').val();
 }
 
 /**
@@ -55,7 +53,6 @@ function clearConfigFilter() {
     productType = '';
     cloudCover = '';
     ageDays = '';
-    source = '';
 }
 
 
