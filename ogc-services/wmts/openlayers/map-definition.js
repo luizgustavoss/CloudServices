@@ -110,29 +110,23 @@ function applyFilter() {
     if (productType || cloudCover || ageDays || source) {
 
         Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
-
         var cql = '';
-
         if (productType) {
             cql += '(product_type=' + productType + ")";
         }
-
         if (cloudCover) {
             if (cql) {
                 cql += ' AND ';
             }
             cql += '(cloud_cover<' + cloudCover + ")";
         }
-
         if (ageDays) {
             if (cql) {
                 cql += ' AND ';
             }
             cql += '(age_days<' + ageDays + ")";
         }
-
         Coverage_CQL_Filter += cql;
-
         mapUrl += Coverage_CQL_Filter;
     }
 
