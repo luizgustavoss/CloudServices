@@ -10,17 +10,15 @@ for (var z = 0; z < 14; ++z) {
     matrixIds[z] = 'EPSG:3857:' + z;
 }
 
-
-/** layers do mapa: OSM (OpenStreetmap) e DG (Digital Globe) */
+// layers do mapa: OSM (OpenStreetmap) e DG (Digital Globe)
 var osmLayer;
 var dgLayer;
 
-/** opacidade */
+// opacidade
 var opacidadeOSM = 1; // OSM
 var opacidadeDG = 1; // Digital Globe
 
-
-/** valores default para as configurações da camada da Digital Globe **/
+// variáveis com valores default para as configurações da camada da Digital Globe
 var baseUrl = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';
 var connectid = 'CONNECT_ID';
 var featureProfile = 'Accuracy_Profile';
@@ -28,19 +26,19 @@ var mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + feat
 var format = 'image/jpeg';
 var Coverage_CQL_Filter;
 
-
-/** filtros (Coverage_CQL_Filter) para a camada da Digital Globe */
+// variáveis usadas no filtro (Coverage_CQL_Filter)
 var productType;
 var cloudCover;
 var ageDays;
 var source;
 
-/** valores para autenticação no GetCapabilities */
+// variáveis usadas na autenticação (GetCapabilities)
 var username;
 var password;
 
-
-/** aplicar valores do filtro nas variáveis */
+/** 
+ * aplica valores do filtro nas variáveis 
+ */
 function configFilter() {
 
     productType = $('#productType').val();
@@ -49,7 +47,9 @@ function configFilter() {
     source = $('#source').val();
 }
 
-/** limpar valores dos filtros nas variáveis */
+/**
+ * limpa valores dos filtros nas variáveis 
+ */
 function clearConfigFilter() {
 
     productType = '';
@@ -59,28 +59,45 @@ function clearConfigFilter() {
 }
 
 
-function callGetCapabilities(){
-    
+/**
+ * chama o serviço GetCapabilities do provedor para autenticação
+ */
+function callGetCapabilities() {
+
     connectid = $('#connectid').val();
     username = $('#username').val();
     password = $('#password').val();
 
-    if(!connectid){
+    if (!connectid) {
         alert('ConnectID não informado!')
-    } else if(!username || !password){
+    } else if (!username || !password) {
         alert('Usuário e/ou senha não informados!')
-    }
-    else{      
+    } else {
 
-        var gcURL = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';    
-        gcURL += 'connectid='+connectid+'&SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&username='+username+'&password='+password;
+        var gcURL = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';
+        gcURL += 'connectid=' + connectid + '&SERVICE=WMTS&REQUEST=GetCapabilities&VERSION=1.0.0&username=' +
+            username + '&password=' + password;
 
-        fetch(gcURL);
+        //fetch(gcURL);
+
+        fetch(gcURL, {
+                method: 'get'
+            })
+            .then(function(response) {
+                console.log(response);
+            })
+            .catch(function(err) {
+                console.error(err);
+            });
 
     }
 
 }
 
+
+/**
+ * aplica os filtros e configurações e reenderiza o mapa
+ */
 function applyFilter() {
 
     format = $('#format').val();
@@ -92,7 +109,7 @@ function applyFilter() {
 
     mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
 
-    // preparar cql_filter, se houverem filtros aplicados
+
     if (productType || cloudCover || ageDays || source) {
 
         Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
@@ -100,39 +117,29 @@ function applyFilter() {
         var cql = '';
 
         if (productType) {
-            cql += '(productType = ' + productType + ")";
+            cql += '(product_type=' + productType + ")";
         }
 
         if (cloudCover) {
             if (cql) {
                 cql += ' AND ';
             }
-            cql += '(cloudCover < ' + cloudCover + ")";
+            cql += '(cloud_cover<' + cloudCover + ")";
         }
 
         if (ageDays) {
             if (cql) {
                 cql += ' AND ';
             }
-            cql += '(ageDays >= ' + ageDays + ")";
+            cql += '(age_days<' + ageDays + ")";
         }
 
-        /*
-        if(source ){
-            if(cql){
-                cql += ' AND ';
-            }
-            cql += '(source >= '+source+")";
-        }
-        */
-
-        Coverage_CQL_Filter += "'" + cql + "'";
+        Coverage_CQL_Filter += cql;
 
         mapUrl += Coverage_CQL_Filter;
     }
 
-
-
+    // redefinição do source da layer com base nas novas configurações e filtros
     dgLayer.setSource(new ol.source.WMTS({
         url: mapUrl,
         layer: 'DigitalGlobe:ImageryTileService',
@@ -153,6 +160,10 @@ function applyFilter() {
 
 }
 
+
+/** 
+ * definição inicial das layers dos mapas 
+ */
 function defineMap() {
 
     osmLayer = new ol.layer.Tile({
@@ -178,6 +189,4 @@ function defineMap() {
             zoom: 4
         })
     });
-
-
 }

@@ -58,6 +58,7 @@
                 <div class="form-group">
                     <label for="featureProfile"><i class="fa fa-bars" aria-hidden="true"></i> Stacking Profile:</label>
                     <select class="form-control" id="featureProfile">
+                        <option  value="Accuracy_Profile">Accuracy Profile</option>
                         <option  value="MyDG_User_Assigned_Profile">User's Assigned Profile</option>
                         <option value="MyDG_Color_Consumer_Profile">Most Aesthetic Color</option>
                         <option value="MyDG_Consumer_Profile">Most Aesthetic All</option>
@@ -152,8 +153,8 @@
                                 <div class="form-group">
                                     <label for="productType"><i class="fa fa-globe" aria-hidden="true"></i> Tipo de Produto:</label>
                                     <select class="form-control" id="productType">
-                                        <option value="">Nenhum (Padrão)</option>
-                                        <option selected>Natural Color</option>
+                                        <option value="" selected>Nenhum (Padrão)</option>
+                                        <option>Natural Color</option>
                                         <option>Pan Sharpened Natural Color</option>
                                         <option>Panchromatic</option>
                                         <option>Color Infrared</option>
@@ -205,24 +206,6 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label for="source"><i class="fa fa-database" aria-hidden="true"></i> Fontes:</label>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV01">WV01</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV02">WV02</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV03">WV03</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="GE01">GE01</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="QB02">QB02</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS3">KS3</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS3A">KS3A</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="WV03_SWIR">WV03_SWIR</label>
-                                <label class="checkbox-inline"><input id="source" type="checkbox" value="KS5">KS5</label>
-                            </div>
-                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
@@ -249,7 +232,7 @@
                     <div class="modal-body">
 
                         <div class="row">
-                            
+
                             <div class="col-sm-3">
                                 <div class="form-group">
                                     <label for="username"><i class="fa fa-key" aria-hidden="true"></i> Username:</label>
