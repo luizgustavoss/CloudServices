@@ -24,9 +24,9 @@ var connectid = 'CONNECT_ID';
 var featureProfile = 'Accuracy_Profile';
 var mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + featureProfile;
 var format = 'image/jpeg';
-var Coverage_CQL_Filter;
+var CQL_Filter;
 
-// variáveis usadas no filtro (Coverage_CQL_Filter)
+// variáveis usadas no filtro (CQL_Filter)
 var productType;
 var cloudCover;
 var ageDays;
@@ -109,25 +109,25 @@ function applyFilter() {
 
     if (productType || cloudCover || ageDays) {
 
-        Coverage_CQL_Filter = '&Coverage_CQL_Filter=';
+        CQL_Filter = '&CQL_Filter=';
         var cql = '';
         if (productType) {
-            cql += '(product_type=' + productType + ")";
+            cql += "(productType='" + productType + "')";
         }
         if (cloudCover) {
             if (cql) {
                 cql += ' AND ';
             }
-            cql += '(cloud_cover<' + cloudCover + ")";
+            cql += "(cloudCover<'" + cloudCover + "')";
         }
         if (ageDays) {
             if (cql) {
                 cql += ' AND ';
             }
-            cql += '(age_days<' + ageDays + ")";
+            cql += "(age_days<'" + ageDays + "')";
         }
-        Coverage_CQL_Filter += cql;
-        mapUrl += Coverage_CQL_Filter;
+        CQL_Filter += cql;
+        mapUrl += CQL_Filter;
     }
 
     // redefinição do source da layer com base nas novas configurações e filtros
