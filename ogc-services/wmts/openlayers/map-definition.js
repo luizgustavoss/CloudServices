@@ -14,11 +14,11 @@ for (var z = 0; z < 14; ++z) {
 var osmLayer;
 var dgLayer;
 
-// opacidade
+// opacity
 var opacidadeOSM = 1; // OSM
 var opacidadeDG = 1; // Digital Globe
 
-// variáveis com valores default para as configurações da camada da Digital Globe
+// default values for the Digital Globe layer
 var baseUrl = 'https://services.digitalglobe.com/earthservice/wmtsaccess?';
 var connectid = 'CONNECT_ID';
 var featureProfile = 'Accuracy_Profile';
@@ -26,17 +26,17 @@ var mapUrl = baseUrl + 'connectid=' + connectid + '&' + 'featureProfile=' + feat
 var format = 'image/jpeg';
 var CQL_Filter;
 
-// variáveis usadas no filtro (CQL_Filter)
+// variables used for filters (CQL_Filter)
 var productType;
 var cloudCover;
 var ageDays;
 
-// variáveis usadas na autenticação (GetCapabilities)
+// variables used for authentication (GetCapabilities)
 var username;
 var password;
 
 /** 
- * aplica valores do filtro nas variáveis 
+ * apply filter values 
  */
 function configFilter() {
 
@@ -46,7 +46,7 @@ function configFilter() {
 }
 
 /**
- * limpa valores dos filtros nas variáveis 
+ * clean filter values 
  */
 function clearConfigFilter() {
 
@@ -57,7 +57,7 @@ function clearConfigFilter() {
 
 
 /**
- * chama o serviço GetCapabilities do provedor para autenticação
+ * call the GetCapabilities service for authentication
  */
 function callGetCapabilities() {
 
@@ -86,14 +86,12 @@ function callGetCapabilities() {
             .catch(function(err) {
                 console.error(err);
             });
-
     }
-
 }
 
 
 /**
- * aplica os filtros e configurações e reenderiza o mapa
+ * apply filters and configurations and render the map
  */
 function applyFilter() {
 
@@ -126,11 +124,27 @@ function applyFilter() {
             }
             cql += "(age_days<'" + ageDays + "')";
         }
+
+        // tests
+        //cql += " AND (source='WV01')";
+        //cql += " AND (offNadirAngle='0.0')";
+        //cql += " AND (sunElevation='0.0')";
+        //cql += " AND (sunAzimuth='0.0')";
+        //cql += " AND (sourceUnit='Mosaic Product')"; // Mosaic Product
+        //cql += " AND (featureId=7b1177f7200deda446c333a9a6689ba8)";
+        //cql += " AND (CE90Accuracy=8.4)";
+        //cql += " AND (spatialAccuracy='1:12,000')";
+        //cql += " AND (crsFromPixels='EPSG:32721')";
+        //cql += " AND (perPixelX='0.5')";
+        //cql += " AND (perPixelY='-0.5')";
+        //cql += " AND (outputMosaic=True)";
+
+
         CQL_Filter += cql;
         mapUrl += CQL_Filter;
     }
 
-    // redefinição do source da layer com base nas novas configurações e filtros
+    // redefine the layer's source based on the new configurations and filters
     dgLayer.setSource(new ol.source.WMTS({
         url: mapUrl,
         layer: 'DigitalGlobe:ImageryTileService',
@@ -153,7 +167,7 @@ function applyFilter() {
 
 
 /** 
- * definição inicial das layers dos mapas 
+ * initial map layers definition 
  */
 function defineMap() {
 
